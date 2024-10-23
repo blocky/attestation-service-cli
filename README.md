@@ -28,7 +28,9 @@ echo '[{ "template": { "method": "GET", "url": "https://opentdb.com/api.php?amou
 	./bky-as attest-api-call > out.json
 ```
 
-3. Inspect the attested API response
+3. Inspect the attested API response. (You may need to install 
+[`jq`](https://jqlang.github.io/jq/), if you don't have it already, to inspect 
+JSON output.)
 
 ```bash
 jq '.api_calls[0].claims.response.body | @base64d | fromjson' out.json
@@ -45,7 +47,9 @@ For access to BLOCKY-AS deployed on
 production TEE servers, reach out to
 [info@blocky.rocks](mailto:info@blocky.rocks).
 
-## Installation
+## Full Walk Through
+
+### Installation
 
 To install the BLOCKY-AS CLI, run the following command:
 
@@ -67,7 +71,11 @@ To test the installation and see available commands, run:
 bky-as --help
 ```
 
-## Configuration
+You may also need to install
+[`jq`](https://jqlang.github.io/jq/), if you don't have it already, to inspect
+JSON output.
+
+### Configuration
 
 The starting `config.toml` uses `local-server` as the host, which
 directs `bky-as` to start a local server that does **NOT** run in a TEE.
@@ -91,7 +99,7 @@ To use BLOCKY-AS in production, contact
 After you set these values in `config.toml`, you'll be able to obtain
 attestations that anyone can verify without trusting you or BLOCKY.
 
-## Request Templates
+### Request Templates
 
 BLOCKY-AS uses TEEs to transform a set of
 [request templates](#request-templates) into API requests and return a
@@ -150,7 +158,7 @@ In each request template, just one in the above example, you specify:
 Finally, update the `environment.apikey` with your API key from
 [tomorrow.io](https://docs.tomorrow.io).
 
-## Attestations
+### Attestations
 
 To obtain BLOCKY-AS attestations using the request templates in `requests.json`,
 run:
@@ -193,12 +201,12 @@ which produces data with the following structure:
 }
 ```
 
+- `Platform` contains type of the platform on which the BLOCKY-AS server runs.
+  If you are running the demo using `local-server` in `config.toml`, the
+  `"Platform": "plain"` indicates that the server is not running in a TEE.
 - `PlAttests` contains platform attestations created by the TEE hardware
    module.  The platform attestations collectively attest a serialized
    *application public key* that is specific to an instance of a BLOCKY-AS server.
-- `Platform` contains type of the platform on which the BLOCKY-AS server runs.
-   If you are running the demo using `local-server` in `config.toml`, the
-   `"Platform": "plain"` indicates that the server is not running in a TEE.
 
 Next, let's inspect the `api_calls`. In general, the _i_-th entry of
 `api_calls` in `out.json` corresponds to the _i_-th
@@ -279,7 +287,7 @@ diff out.json verified.json
 
 which will show no output, indicating that contents of the files are the same.
 
-## Enclave Measurements
+### Enclave Measurements
 
 The foundation of the BLOCKY-AS security model relies on two axioms:
 
@@ -312,7 +320,7 @@ measurement to enter into your `config.toml` file.
 In the future, you will be able to compute this value yourself and know what
 code produces the attestations you receive.
 
-## Protocol
+### Protocol
 
 For a final deep dive, let's explore the protocol used in BLOCKY-AS.
 
