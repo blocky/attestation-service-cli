@@ -28,8 +28,8 @@ echo '[{ "template": { "method": "GET", "url": "https://opentdb.com/api.php?amou
 	./bky-as attest-api-call > out.json
 ```
 
-3. Inspect the attested API response. (You may need to install 
-[`jq`](https://jqlang.github.io/jq/), if you don't have it already, to inspect 
+3. Inspect the attested API response. (You may need to install
+[`jq`](https://jqlang.github.io/jq/), if you don't have it already, to inspect
 JSON output.)
 
 ```bash
@@ -142,7 +142,7 @@ In each request template, just one in the above example, you specify:
    - A collection of variables to use in the template. The variables can contain
      secrets for accessing the API, or other information you do not want to leak
      to BLOCKY, or to the third parties that verify BLOCKY-AS attestations.
-     This variables will be encrypted by `bky-as` and decrypted by the server.
+     These variables will be encrypted by `bky-as` and decrypted by the server.
 - `template` - (required)
    - The template the BLOCKY-AS server will use to form an API request,
      including:
@@ -228,7 +228,7 @@ shows that it contains
 
 But what are these things? Let's discuss them.
 Recall that each instance of BLOCKY-AS has a unique application
-public key with an associated private key.  We use that public key to sign
+public key with an associated private key.  We use that private key to sign
 data, which we call *claims*. We call the data structure containing the claims,
 the signature, and other information needed for checking the signature a
 *transitive attestation*.  (In fact, transitive attestations follow the
@@ -343,7 +343,6 @@ The figure below shows the details of the interactions between a user,
 %%{init: { 'sequence': {'actorMargin': 10} }}%%
 %%{init: { 'sequence': {'noteAlign': 'left'} }}%%
 %%{init: { 'sequence': {'messageAlign': 'left'} }}%%
-%%{init: {'theme':'neutral'}}%%
 
 sequenceDiagram
 	autonumber
@@ -361,7 +360,7 @@ sequenceDiagram
 	cli ->> as: GET /enclave-attested-application-public-key
 	as --> as: enclave_attested_application_public_key = <br> #nbsp; Attest({application_public_key, encalve_measurement}, nitro_private_key)
 	as --) cli: enclave_attested_application_public_key
-	cli --> cli: applicaiton_public_key, enclave_measurement = <br> #nbsp; Verify(enclave_attested_application_public_key, nitro_certificate)
+	cli --> cli: application_public_key, enclave_measurement = <br> #nbsp; Verify(enclave_attested_application_public_key, nitro_certificate)
 
 	cli ->> as: GET /transitive-attested-encryption-key
 	as --> as: transitive_attested_encryption_key = <br> #nbsp; Sign(encryption_public_key, application_private_key)
@@ -370,7 +369,7 @@ sequenceDiagram
 
 	loop
 		cli --> cli: protected_request
-	%%		encrypted_user_id = <br> #nbsp; Encrypt( "secret_user_id", encryption_shared_key) <br> encrypted_user_password = <br> #nbsp; Encrypt( "secret_user_password", encryption_shared_key) <br> request = { <br> #nbsp; #nbsp; "environment": { <br> #nbsp; #nbsp; #nbsp; #nbsp; "user-id": encrypted_user_id, <br> #nbsp; #nbsp; #nbsp; #nbsp; "user-password": encrypted_user_password, <br> #nbsp; #nbsp; }, <br> #nbsp; #nbsp; "template": { <br> #nbsp; #nbsp; #nbsp; #nbsp; "method": "GET", <br> #nbsp; #nbsp; #nbsp; #nbsp; "url": "https://upstream-server.com/data?user={{user-id}}", <br> #nbsp; #nbsp; #nbsp; #nbsp; "header": { <br> #nbsp; #nbsp; #nbsp; #nbsp; #nbsp; #nbsp; "password": "{{user-password}}" <br> #nbsp; #nbsp; #nbsp; #nbsp; } <br> #nbsp; #nbsp; } <br> }
+	%%		encrypted_user_id = <br> #nbsp; Encrypt( "secret_user_id", encryption_public_key) <br> encrypted_user_password = <br> #nbsp; Encrypt( "secret_user_password", encryption_public_key) <br> request = { <br> #nbsp; #nbsp; "environment": { <br> #nbsp; #nbsp; #nbsp; #nbsp; "user-id": encrypted_user_id, <br> #nbsp; #nbsp; #nbsp; #nbsp; "user-password": encrypted_user_password, <br> #nbsp; #nbsp; }, <br> #nbsp; #nbsp; "template": { <br> #nbsp; #nbsp; #nbsp; #nbsp; "method": "GET", <br> #nbsp; #nbsp; #nbsp; #nbsp; "url": "https://upstream-server.com/data?user={{user-id}}", <br> #nbsp; #nbsp; #nbsp; #nbsp; "header": { <br> #nbsp; #nbsp; #nbsp; #nbsp; #nbsp; #nbsp; "password": "{{user-password}}" <br> #nbsp; #nbsp; #nbsp; #nbsp; } <br> #nbsp; #nbsp; } <br> }
 
 		cli ->> as: POST /transitive-attested-api-call <br> #nbsp; body: protected_request
 
@@ -385,7 +384,7 @@ sequenceDiagram
 
 		as --) cli: transitive_attested_api_call
 
-		cli --> cli: request, iat, response = <br> #nbsp; Check(transitive_attested_api_call, application_shared_key)
+		cli --> cli: request, iat, response = <br> #nbsp; Check(transitive_attested_api_call, application_public_key)
 	end
 
 	cli --) user: [{request, iat, response, transitive_attested_api_call}]
@@ -499,7 +498,7 @@ user_password = Decrypt(encrypted_user_password, encryption_private_key)
     of `protected_request.template`.
 20. The BLOCKY-AS server creates a `transitive_attested_api_call`, which is a
     JWT over the `request`, `iat`, and `response` claims
-    signed with the `application_public_key`.
+    signed with the `application_private_key`.
 21. The BLOCKY-AS server returns the `transitive_attested_api_call`.
 22. `bky-as` checks each `transitive_attested_api_call` using the `application_public_key`
     and extracts the `request`, `iat`, and `response` claims corresponding to
