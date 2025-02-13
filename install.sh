@@ -5,7 +5,7 @@ set -e
 
 REPO="attestation-service-demo"
 APP="bky-as"
-VERSION="v0.1.0-beta.3"
+VERSION="v0.1.0-beta.2"
 
 # let the user know a step was successful
 function passCheck() {
@@ -41,7 +41,7 @@ function verifySupport() {
     local os=$1
     local arch=$2
 
-    local supported=(linux-amd64 darwin-amd64 darwin-arm64)
+    local supported=(linux-amd64 linux-arm64 darwin-amd64 darwin-arm64)
     local current="$os-$arch"
 
     for i in "${supported[@]}"; do
@@ -71,7 +71,7 @@ function downloadCLI() {
     local arch=$2
 
     local base="https://github.com/blocky/${REPO}/releases/download"
-    local artifact="${os}_${arch}"
+    local artifact="${APP}_${os}_${arch}"
     local url="${base}/${VERSION}/${artifact}"
 
     curl -SsL "${url}" -o "${APP}"
@@ -96,7 +96,7 @@ function verifyCLI() {
 
 function nextSteps() {
     cat << EOF
-    To get started, check out the getting started guide and documentation at
+    To get started, check out the getting started guide and documentation at 
     https://github.com/blocky/${REPO}
 EOF
 }
