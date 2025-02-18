@@ -74,10 +74,7 @@ function downloadCLI() {
     local artifact="${APP}_${os}_${arch}"
     local url="${base}/${VERSION}/${artifact}"
 
-    if ! curl --silent --show-error --location --fail "${url}" -o "${APP}"; then
-        exitWithErr "Failed to download ${APP} from ${url}."
-    fi
-
+    curl -SsL "${url}" -o "${APP}"
     chmod +x "${APP}"
 }
 
