@@ -85,7 +85,7 @@ function downloadConfig() {
     local artifact="config.toml"
     local url="${base}/${VERSION}/${artifact}"
 
-    if ! curl --silent --location --fail "${url}" -o "config.toml"; then
+    if ! curl --silent --location --fail "${url}" -o "${artifact}"; then
         exitWithErr "Config download failed"
     fi
 }
