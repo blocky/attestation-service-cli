@@ -5,7 +5,7 @@ set -e
 
 REPO="attestation-service-demo"
 APP="bky-as"
-VERSION="v0.1.0-beta.2"
+VERSION="v0.1.0-beta.3"
 
 # let the user know a step was successful
 function passCheck() {
@@ -41,7 +41,7 @@ function verifySupport() {
     local os=$1
     local arch=$2
 
-    local supported=(linux-amd64 linux-arm64 darwin-amd64 darwin-arm64)
+    local supported=(linux-amd64 darwin-amd64 darwin-arm64)
     local current="$os-$arch"
 
     for i in "${supported[@]}"; do
@@ -74,7 +74,9 @@ function downloadCLI() {
     local artifact="${APP}_${os}_${arch}"
     local url="${base}/${VERSION}/${artifact}"
 
-    curl -SsL "${url}" -o "${APP}"
+    if ! curl --silent --location --fail --show-error "${url}" -o "${APP}"; then
+        exitWithErr " CLI download failed"
+    fi
     chmod +x "${APP}"
 }
 
@@ -83,20 +85,22 @@ function downloadConfig() {
     local artifact="config.toml"
     local url="${base}/${VERSION}/${artifact}"
 
-    curl -SsL "${url}" -o "${artifact}"
+    if ! curl --silent --location --fail --show-error "${url}" -o "${artifact}"; then
+        exitWithErr "Config download failed"
+    fi
 }
 
 function verifyCLI() {
-    if command -v "./${APP}" > /dev/null; then
+    if ./${APP} --help > /dev/null 2>&1; then
         passCheck "SUCCESS! You have downloaded the ${APP} CLI"
     else
-        exitWithErr "download failed"
+        exitWithErr "install failed"
     fi
 }
 
 function nextSteps() {
     cat << EOF
-    To get started, check out the getting started guide and documentation at 
+    To get started, check out the getting started guide and documentation at
     https://github.com/blocky/${REPO}
 EOF
 }
