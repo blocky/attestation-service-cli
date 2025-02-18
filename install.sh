@@ -77,7 +77,7 @@ function downloadCLI() {
     if ! curl --silent --location --fail "${url}" -o "${APP}"; then
         exitWithErr " CLI download failed"
     fi
-        chmod +x "${APP}"
+    chmod +x "${APP}"
 }
 
 function downloadConfig() {
@@ -85,13 +85,13 @@ function downloadConfig() {
     local artifact="config.toml"
     local url="${base}/${VERSION}/${artifact}"
 
-    if ! curl --silent --location --fail "${url}" -o "${APP}"; then
-        exitWithErr "config download failed"
+    if ! curl --silent --location --fail "${url}" -o "config.toml"; then
+        exitWithErr "Config download failed"
     fi
 }
 
 function verifyCLI() {
-    if command -v "./${APP}" > /dev/null; then
+    if ./${APP} --help > /dev/null 2>&1; then
         passCheck "SUCCESS! You have downloaded the ${APP} CLI"
     else
         exitWithErr "install failed"
