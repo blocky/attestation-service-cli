@@ -74,7 +74,7 @@ function downloadCLI() {
     local artifact="${APP}_${os}_${arch}"
     local url="${base}/${VERSION}/${artifact}"
 
-    if ! curl --silent --location --fail "${url}" -o "${APP}"; then
+    if ! curl --silent --location --fail --show-error "${url}" -o "${APP}"; then
         exitWithErr " CLI download failed"
     fi
     chmod +x "${APP}"
@@ -85,7 +85,7 @@ function downloadConfig() {
     local artifact="config.toml"
     local url="${base}/${VERSION}/${artifact}"
 
-    if ! curl --silent --location --fail "${url}" -o "${artifact}"; then
+    if ! curl --silent --location --fail --show-error "${url}" -o "${artifact}"; then
         exitWithErr "Config download failed"
     fi
 }
