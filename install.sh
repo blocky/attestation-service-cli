@@ -5,7 +5,7 @@ set -e
 
 REPO="attestation-service-demo"
 APP="bky-as"
-VERSION="v0.1.0-beta.7"
+VERSION="v0.1.0-beta.8"
 
 # let the user know a step was successful
 function passCheck() {
