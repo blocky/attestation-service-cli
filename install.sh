@@ -3,7 +3,7 @@
 # Exit on error
 set -e
 
-REPO="attestation-service-demo"
+REPO="attestation-service-cli"
 APP="bky-as"
 VERSION="v0.1.0-beta.8"
 
