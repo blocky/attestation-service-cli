@@ -101,7 +101,7 @@ function verifyCLI() {
 function nextSteps() {
     cat << EOF
     To get started, check out the getting started guide and documentation at
-    https://github.com/blocky/${REPO}
+    https://blocky-docs.redocly.app
 EOF
 }
 
