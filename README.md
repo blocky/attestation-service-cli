@@ -15,5 +15,5 @@ To install the current dev version run:
 curl -s https://raw.githubusercontent.com/blocky/attestation-service-cli/refs/heads/main/install.sh | bash
 ```
 
-For installation instructions, example usage and documentation, read the
+For installing specific release versions, example usage, and documentation, read the
 [docs](https://blocky-docs.redocly.app/attestation-service).
