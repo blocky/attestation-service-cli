@@ -8,7 +8,12 @@
 The Blocky Attestation Service gives you access to verifiable serverless
 computing running inside a Trusted Execution Environment (TEE).
 
-This repository contains release artifacts for the Blocky AS CLI. 
-For installation instructions and usage examples, check out our 
-[documentation site](https://blocky-docs.redocly.app/attestation-service).
+This repository contains release artifacts for the Blocky AS CLI.
+To install the current dev version run:
 
+```bash
+curl -s https://raw.githubusercontent.com/blocky/attestation-service-cli/refs/heads/main/install.sh | bash
+```
+
+For installing specific release versions, example usage, and documentation, read the
+[docs](https://blocky-docs.redocly.app/attestation-service).

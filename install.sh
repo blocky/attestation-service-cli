@@ -3,7 +3,7 @@
 # Exit on error
 set -e
 
-REPO="attestation-service-demo"
+REPO="attestation-service-cli"
 APP="bky-as"
 VERSION="v0.1.0-beta.8"
 
@@ -101,7 +101,7 @@ function verifyCLI() {
 function nextSteps() {
     cat << EOF
     To get started, check out the getting started guide and documentation at
-    https://github.com/blocky/${REPO}
+    https://blocky-docs.redocly.app
 EOF
 }
 
