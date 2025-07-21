@@ -3,9 +3,13 @@
 # Exit on error
 set -e
 
-REPO="attestation-service-cli"
-APP="bky-as"
-VERSION="v0.1.0-beta.10"
+AS_REPO="attestation-service-cli"
+AS_APP="bky-as"
+AS_VERSION="v0.1.0-beta.1"
+
+C_REPO="compiler"
+C_APP="bky-c"
+C_VERSION="v0.1.0-beta.2"
 
 # let the user know a step was successful
 function passCheck() {
@@ -66,24 +70,38 @@ function verifyCurl() {
     fi
 }
 
-function downloadCLI() {
+function downloadASCLI() {
     local os=$1
     local arch=$2
 
-    local base="https://github.com/blocky/${REPO}/releases/download"
-    local artifact="${APP}_${os}_${arch}"
-    local url="${base}/${VERSION}/${artifact}"
+    local base="https://github.com/blocky/${AS_REPO}/releases/download"
+    local artifact="${AS_APP}_${os}_${arch}"
+    local url="${base}/${AS_VERSION}/${artifact}"
 
-    if ! curl --silent --location --fail --show-error "${url}" -o "${APP}"; then
+    if ! curl --silent --location --fail --show-error "${url}" -o "${AS_APP}"; then
         exitWithErr " CLI download failed"
     fi
-    chmod +x "${APP}"
+    chmod +x "${AS_APP}"
+}
+
+function downloadCCLI() {
+    local os=$1
+    local arch=$2
+
+    local base="https://github.com/blocky/${C_REPO}/releases/download"
+    local artifact="${C_APP}_${C_VERSION}_${os}_${arch}"
+    local url="${base}/${C_VERSION}/${artifact}"
+
+    if ! curl --silent --location --fail --show-error "${url}" -o "${C_APP}"; then
+        exitWithErr " CLI download failed"
+    fi
+    chmod +x "${AS_APP}"
 }
 
 function downloadConfig() {
-    local base="https://github.com/blocky/${REPO}/releases/download"
+    local base="https://github.com/blocky/${AS_REPO}/releases/download"
     local artifact="config.toml"
-    local url="${base}/${VERSION}/${artifact}"
+    local url="${base}/${AS_VERSION}/${artifact}"
 
     if ! curl --silent --location --fail --show-error "${url}" -o "${artifact}"; then
         exitWithErr "Config download failed"
@@ -91,8 +109,9 @@ function downloadConfig() {
 }
 
 function verifyCLI() {
-    if ./${APP} --help > /dev/null 2>&1; then
-        passCheck "SUCCESS! You have downloaded the ${APP} CLI"
+  local app=$1
+    if ./${AS_APP} --help > /dev/null 2>&1; then
+        passCheck "SUCCESS! You have downloaded the ${AS_APP} CLI"
     else
         exitWithErr "install failed"
     fi
@@ -112,9 +131,11 @@ function main() {
 
     verifySupport "$os" "$arch"
     verifyCurl
-    downloadCLI "$os" "$arch"
+    downloadASCLI "$os" "$arch"
     downloadConfig
-    verifyCLI
+    verifyCLI "$AS_APP"
+    downloadCCLI "$os" "$arch"
+    verifyCLI "$C_APP"
     nextSteps
 }
 
